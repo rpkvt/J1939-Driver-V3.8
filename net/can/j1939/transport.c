@@ -952,7 +952,7 @@ static int j1939tp_txnext(struct session *session)
 			printk("DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 			printk("DEBUG: Calling j1939tp_schedule_txtimer\n");
 			//Use  50 ms delay
-			if(j1939cb_use_bamdelay(session->cb))
+			if(j1939cb_use_bamdelay(&tpmod))
 			{
 				printk("DEBUG: Using 50 ms delay\n");
 				j1939tp_schedule_txtimer(session, 50);
@@ -1093,7 +1093,7 @@ tx_cts:
 				if (session->pkt.tx < session->pkt.total)
 				{
 					//Use the normal BAM delay?
-					if(j1939cb_use_bamdelay(session->cb))
+					if(j1939cb_use_bamdelay(&tpmod))
 					{
 						//Send packet after 50 ms
 						j1939tp_schedule_txtimer(session, 50);

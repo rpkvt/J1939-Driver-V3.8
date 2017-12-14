@@ -210,22 +210,26 @@ struct j1939_sk_buff_cb {
 	pgn_t pgn;
 	int msg_flags;
 	/* for tx, MSG_SYN will be used to sync on sockets */
-	int tpflags; 				//Flags for modifying the trasnport protocol
-	#define BAM_NODELAY 	1	//One such flag
 };
 #define J1939_MSG_RESERVED	MSG_SYN
 #define J1939_MSG_SYNC		MSG_SYN
 
 
+struct j1939_tp_mod
+{
+	int tpflags; 				//Flags for modifying the trasnport protocol
+	#define BAM_NODELAY 	1	//One such flag
+};
+
 //Check if we want to disable the normal BAM 50 ms delay
 //Return 0 if we want to disable the delay
 //Return 1 if we want to keep the delay
-static inline int j1939cb_use_bamdelay(const struct j1939_sk_buff_cb *skcb)
+static inline int j1939cb_use_bamdelay(const struct j1939_tp_mod *tpmod)
 {
 	printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
-	printk(KERN_ALERT "DEBUG: skcb->tpflags state: %d\n",skcb->tpflags);
+	printk(KERN_ALERT "DEBUG: skcb->tpflags state: %d\n",tpmod->tpflags);
 
-	if(skcb->tpflags & BAM_NODELAY)
+	if(tpmod->tpflags & BAM_NODELAY)
 	{
 		return 0;
 	}

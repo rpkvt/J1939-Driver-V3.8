@@ -31,6 +31,7 @@ struct j1939_sock {
 	#define JSK_CONNECTED	BIT(1)
 	#define PROMISC		BIT(2)
 	#define RECV_OWN	BIT(3)
+	#define JSK_BAM_DELAY BIT(4)
 
 	struct {
 		name_t src, dst;
@@ -620,6 +621,13 @@ static int j1939sk_setsockopt(struct socket *sock, int level, int optname,
 		jsk->sk.sk_priority = j1939_to_sk_priority(tmp);
 		release_sock(&jsk->sk);
 		break;
+	case SO_J1939_BAM_DELAY_DISABLE:
+		//Enables/Disables delay
+		tmp = j1939sk_setsockopt_flag(jsk, optval, optlen, JSK_BAM_DELAY);
+		printk("DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+		printk("DEBUG: SO_J1939_BAM_DELAY_DISABLE used with value: %d\n",tmp);
+		printk("DEBUG: jsk->state: %d\n",(int)(jsk->state));
+		return tmp;
 	default:
 		return -ENOPROTOOPT;
 	}
@@ -655,6 +663,9 @@ static int j1939sk_getsockopt(struct socket *sock, int level, int optname,
 		break;
 	case SO_J1939_SEND_PRIO:
 		tmp = j1939_prio(jsk->sk.sk_priority);
+		break;
+	case SO_J1939_BAM_DELAY_DISABLE:
+		tmp = (jsk->state & JSK_BAM_DELAY) ? 1 : 0;
 		break;
 	default:
 		ret = -ENOPROTOOPT;
@@ -809,6 +820,12 @@ static int j1939sk_sendmsg(struct kiocb *iocb, struct socket *sock,
 	skb_cb->priority = j1939_prio(jsk->sk.sk_priority);
 	skb_cb->src.addr = jsk->addr.sa;
 	skb_cb->dst.addr = jsk->addr.da;
+
+	//Check if delay has been disabled
+	sk_cb->tpflags = (jsk->state & JSK_BAM_DELAY)?BAM_NODELAY:0;
+	printk("DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+	printk("DEBUG: sk_cb->tpflags state: %d\n",sk_cb->tpflags);
+
 
 	if (msg->msg_name) {
 		struct sockaddr_can *addr = msg->msg_name;

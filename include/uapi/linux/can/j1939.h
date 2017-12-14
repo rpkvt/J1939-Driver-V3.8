@@ -63,6 +63,7 @@ enum {
 	SO_J1939_PROMISC = 2,	/* set/clr promiscuous mode */
 	SO_J1939_RECV_OWN = 3,
 	SO_J1939_SEND_PRIO = 4,
+	SO_J1939_BAM_DELAY_DISABLE = 5, //Enable/Disable 50 ms delay for BAM messages
 };
 
 enum {

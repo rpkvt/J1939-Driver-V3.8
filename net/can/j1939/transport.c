@@ -942,8 +942,31 @@ static int j1939tp_txnext(struct session *session)
 			goto failed;
 		session->last_txcmd = dat[0];
 		/* must lock? */
+		/*
 		if (tp_cmd_bam == dat[0])
 			j1939tp_schedule_txtimer(session, 50);
+		*/
+		//Initial start to the BAM process
+		if (tp_cmd_bam == dat[0])
+		{
+			printk("DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+			printk("DEBUG: Calling j1939tp_schedule_txtimer\n");
+			//Use  50 ms delay
+			if(j1939cb_use_bamdelay(session->cb))
+			{
+				printk("DEBUG: Using 50 ms delay\n");
+				j1939tp_schedule_txtimer(session, 50);
+			}
+			//Don't use bam delay
+			else
+			{
+				printk("DEBUG: Using 0 ms delay\n");
+
+				//Start transmit immediately.
+				//TODO: Take in delay value through socket.
+				j1939tp_schedule_txtimer(session, 0);
+			}
+		}
 		j1939tp_set_rxtimeout(session, 1250);
 		break;
 	case tp_cmd_rts:
@@ -1043,7 +1066,8 @@ tx_cts:
 		pkt_end = (!session->extd && j1939cb_is_broadcast(session->cb))
 			? session->pkt.total : session->pkt.last;
 
-		while (session->pkt.tx < pkt_end) {
+		while (session->pkt.tx < pkt_end)
+		{
 			dat[0] = session->pkt.tx - session->pkt.dpo+1;
 			offset = session->pkt.tx * 7;
 			len = session->skb->len - offset;
@@ -1056,9 +1080,31 @@ tx_cts:
 			session->last_txcmd = 0xff;
 			++pkt_done;
 			++session->pkt.tx;
-			if (j1939cb_is_broadcast(session->cb)) {
+			/*
+			if (j1939cb_is_broadcast(session->cb))
+			{
 				if (session->pkt.tx < session->pkt.total)
 					j1939tp_schedule_txtimer(session, 50);
+				break;
+			}
+			*/
+			if (j1939cb_is_broadcast(session->cb))
+			{
+				if (session->pkt.tx < session->pkt.total)
+				{
+					//Use the normal BAM delay?
+					if(j1939cb_use_bamdelay(session->cb))
+					{
+						//Send packet after 50 ms
+						j1939tp_schedule_txtimer(session, 50);
+					}
+					else
+					{
+						//Send packet immediately.
+						//TODO: Take in delay value through socket.
+						j1939tp_schedule_txtimer(session, 0);
+					}
+				}
 				break;
 			}
 		}

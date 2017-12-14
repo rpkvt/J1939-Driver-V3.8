@@ -825,9 +825,9 @@ static int j1939sk_sendmsg(struct kiocb *iocb, struct socket *sock,
 	skb_cb->dst.addr = jsk->addr.da;
 
 	//Check if delay has been disabled
-	tpmod->tpflags = (jsk->state & JSK_BAM_DELAY)?BAM_NODELAY:0;
+	tpmod.tpflags = (jsk->state & JSK_BAM_DELAY)?BAM_NODELAY:0;
 	printk("DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
-	printk("DEBUG: sk_cb->tpflags state: %d\n",tpmod->tpflags);
+	printk("DEBUG: sk_cb->tpflags state: %d\n",tpmod.tpflags);
 
 
 	if (msg->msg_name) {

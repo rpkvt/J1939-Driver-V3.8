@@ -949,6 +949,10 @@ static int j1939tp_txnext(struct session *session)
 		//Initial start to the BAM process
 		if (tp_cmd_bam == dat[0])
 		{
+			//Remove delay entirely
+			j1939tp_schedule_txtimer(session, 0);
+
+			/*
 			printk("DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 			printk("DEBUG: Calling j1939tp_schedule_txtimer\n");
 			//Use  50 ms delay
@@ -966,6 +970,7 @@ static int j1939tp_txnext(struct session *session)
 				//TODO: Take in delay value through socket.
 				j1939tp_schedule_txtimer(session, 0);
 			}
+			*/
 		}
 		j1939tp_set_rxtimeout(session, 1250);
 		break;
@@ -1092,6 +1097,10 @@ tx_cts:
 			{
 				if (session->pkt.tx < session->pkt.total)
 				{
+					//Remove delay entirely
+					j1939tp_schedule_txtimer(session, 0);
+
+					/*
 					//Use the normal BAM delay?
 					if(j1939cb_use_bamdelay(&tpmod))
 					{
@@ -1104,6 +1113,7 @@ tx_cts:
 						//TODO: Take in delay value through socket.
 						j1939tp_schedule_txtimer(session, 0);
 					}
+					*/
 				}
 				break;
 			}

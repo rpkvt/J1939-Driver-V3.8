@@ -214,6 +214,7 @@ struct j1939_sk_buff_cb {
 #define J1939_MSG_RESERVED	MSG_SYN
 #define J1939_MSG_SYNC		MSG_SYN
 
+/*
 
 struct j1939_tp_mod
 {
@@ -236,7 +237,7 @@ static inline int j1939cb_use_bamdelay(const struct j1939_tp_mod *tpmod)
 
 	return 1;
 }
-
+*/
 static inline int j1939cb_is_broadcast(const struct j1939_sk_buff_cb *cb)
 {
 	return (!cb->dst.name && (cb->dst.addr >= 0xff));

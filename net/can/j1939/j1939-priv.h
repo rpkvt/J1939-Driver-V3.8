@@ -221,6 +221,9 @@ struct j1939_tp_mod
 	#define BAM_NODELAY 	1	//One such flag
 };
 
+//Transport protocol modification
+extern struct j1939_tp_mod tpmod;
+
 //Check if we want to disable the normal BAM 50 ms delay
 //Return 0 if we want to disable the delay
 //Return 1 if we want to keep the delay

@@ -22,9 +22,6 @@
 #include <linux/can/j1939.h>
 #include "j1939-priv.h"
 
-//Transport protocol modification
-struct j1939_tp_mod tpmod;
-
 struct j1939_sock {
 	struct sock sk; /* must be first to skip with memset */
 	struct list_head list;

@@ -30,6 +30,9 @@ MODULE_DESCRIPTION("PF_CAN SAE J1939");
 MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("EIA Electronics (Kurt Van Dijck & Pieter Beyens)");
 
+//Transport protocol modification
+extern struct j1939_tp_mod tpmod;
+
 static struct {
 	struct notifier_block notifier;
 } s;
